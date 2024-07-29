@@ -37,7 +37,7 @@ public class UserController {
         log.info("Вызов метода POST пользователя {}", user.getName());
         UserDto createdUser = userService.create(user);
         log.info("Пользователь {} с id={} создан", createdUser.getName(), createdUser.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return ResponseEntity.ok().body(createdUser);
     }
 
     @PatchMapping("/{userId}")
