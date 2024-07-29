@@ -3,33 +3,34 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.MyNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
 
 @Slf4j
 @RequiredArgsConstructor
 @Repository
 public class ItemRepositoryInMemory implements ItemRepository {
 
-    private final HashMap<Long, Item> items;
+    private final Map<Long, Item> items;
     private long id = 0L;
 
     @Override
-    public Optional<Item> create(Item item) {
+    public Item create(Item item) {
         id += 1L;
         item.setId(id);
         items.put(id, item);
-        return Optional.of(item);
+        return item;
     }
 
     @Override
-    public Optional<Item> update(Item item) {
+    public Item update(Item item) {
         items.put(item.getId(), item);
-        return Optional.of(item);
+        return item;
     }
 
     @Override
@@ -40,12 +41,12 @@ public class ItemRepositoryInMemory implements ItemRepository {
     }
 
     @Override
-    public Optional<Item> get(long id) {
+    public Item get(long id) {
         if (items.containsKey(id)) {
-            return Optional.of(items.get(id));
+            return items.get(id);
         }
         log.warn("Вещи с id={} не существует в памяти приложения для получения.", id);
-        return Optional.empty();
+        throw new MyNotFoundException("Вещь с id " + id + " не найдена");
     }
 
     @Override

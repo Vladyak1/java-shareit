@@ -3,31 +3,31 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.MyNotFoundException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryInMemory implements UserRepository {
 
-    private final HashMap<Long, User> users;
+    private final Map<Long, User> users;
     private long id = 0L;
 
     @Override
-    public Optional<User> create(User user) {
+    public User create(User user) {
         id += 1L;
         user.setId(id);
         users.put(id, user);
-        return Optional.of(user);
+        return user;
     }
 
     @Override
-    public Optional<User> update(User user) {
+    public User update(User user) {
         users.put(user.getId(), user);
-        return Optional.of(user);
+        return user;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
-    public Optional<User> get(long id) {
+    public User get(long id) {
         if (users.containsKey(id)) {
-            return Optional.ofNullable(users.get(id));
+            return users.get(id);
         }
         log.warn("Пользователя с id={} не существует в памяти приложения для получения.", id);
-        return Optional.empty();
+        throw new MyNotFoundException("Пользователь с id " + id + " не найден");
     }
 
     @Override

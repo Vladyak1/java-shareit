@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DuplicatedException;
-import ru.practicum.shareit.exception.MyNotFoundException;
-import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserListMapper;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -27,15 +25,13 @@ public class UserServiceImpl implements UserService {
             throw new DuplicatedException("Пользоватедль с таким email уже существует");
         }
         User user = userMapper.toModel(userDto);
-        User userFromRep = userRepository.create(user)
-                .orElseThrow(() -> new RepositoryReceiveException("Ошибка создания User:" + user));
+        User userFromRep = userRepository.create(user);
         return userMapper.toDto(userFromRep);
     }
 
     @Override
     public UserDto update(long userId, UserDto userDto) {
-        User returnedUser = userRepository.get(userId)
-                .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + userDto.getId() + " не существует."));
+        User returnedUser = userRepository.get(userId);
 
         User user = userMapper.toModel(userDto);
         user.setId(userId);
@@ -49,15 +45,13 @@ public class UserServiceImpl implements UserService {
             user.setName(returnedUser.getName());
         }
 
-        User newUser = userRepository.update(user)
-                .orElseThrow(() -> new RepositoryReceiveException("Ошибка при обновлении User:" + user));
+        User newUser = userRepository.update(user);
         return userMapper.toDto(newUser);
     }
 
     @Override
     public UserDto getById(long id) {
-        User user = userRepository.get(id)
-                .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
+        User user = userRepository.get(id);
         return userMapper.toDto(user);
     }
 
@@ -69,8 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long id) {
-        userRepository.get(id)
-                .orElseThrow(() -> new MyNotFoundException("Пользователя с id=" + id + " не существует."));
+        userRepository.get(id);
         userRepository.delete(id);
     }
 }
