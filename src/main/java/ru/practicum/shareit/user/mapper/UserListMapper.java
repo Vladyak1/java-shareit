@@ -6,7 +6,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = UserMapper.class)
+@Mapper(componentModel = org.mapstruct.MappingConstants.ComponentModel.SPRING, uses = UserMapper.class)
 public interface UserListMapper {
 
     List<UserDto> toListDto(List<User> users);

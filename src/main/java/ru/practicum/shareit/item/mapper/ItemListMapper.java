@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = ItemMapper.class)
+@Mapper(componentModel = org.mapstruct.MappingConstants.ComponentModel.SPRING, uses = ItemMapper.class)
 public interface ItemListMapper {
 
     List<Item> toListModel(List<ItemDto> itemListDto);
