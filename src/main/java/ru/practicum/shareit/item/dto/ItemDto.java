@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.validator.Marker;
+import ru.practicum.shareit.validator.ValidateWhile;
 
 @Builder
 @Getter
@@ -15,15 +15,15 @@ import ru.practicum.shareit.validator.Marker;
 @ToString
 public class ItemDto {
 
-    @Null(groups = Marker.Create.class, message = "При создании вещи id должно быть null.")
+    @Null(groups = ValidateWhile.Create.class, message = "При создании вещи id должно быть null.")
     private Long id;
 
-    @NotBlank(groups = Marker.Create.class, message = "Имя для Item не может быть пустым")
+    @NotBlank(groups = ValidateWhile.Create.class, message = "Имя для Item не может быть пустым")
     private String name;
-    @NotBlank(groups = Marker.Create.class, message = "Описание для Item не может быть пустым")
+    @NotBlank(groups = ValidateWhile.Create.class, message = "Описание для Item не может быть пустым")
     private String description;
 
-    @NotNull(groups = Marker.Create.class)
+    @NotNull(groups = ValidateWhile.Create.class)
     private Boolean available;
 
 }

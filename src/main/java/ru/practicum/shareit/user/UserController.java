@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validator.Marker;
+import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
 
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody @Validated(Marker.Create.class) UserDto user) {
+    public ResponseEntity<UserDto> create(@RequestBody @Validated(ValidateWhile.Create.class) UserDto user) {
         log.info("Вызов метода POST пользователя {}", user.getName());
         UserDto createdUser = userService.create(user);
         log.info("Пользователь {} с id={} создан", createdUser.getName(), createdUser.getId());
@@ -42,7 +42,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
-                                          @RequestBody @Validated(Marker.Update.class) UserDto newUser) {
+                                          @RequestBody @Validated(ValidateWhile.Update.class) UserDto newUser) {
         log.info("Вызов метода PATCH пользователя: {}", newUser.getName());
         UserDto updatedUser = userService.update(userId, newUser);
         log.info("Пользователь {} с id={} обновлен", newUser.getName(), newUser.getId());

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.validator.Marker;
+import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +33,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> add(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                                       @RequestBody @Validated(Marker.Create.class) ItemDto itemDto) {
+                                       @RequestBody @Validated(ValidateWhile.Create.class) ItemDto itemDto) {
         log.info("Вызов метода POST инструмента: ownerId={}, item={}", ownerId, itemDto);
         return ResponseEntity.ok()
                 .body(itemService.add(ownerId, itemDto));
@@ -41,7 +41,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                                          @RequestBody @Validated(Marker.Update.class) ItemDto itemDto,
+                                          @RequestBody @Validated(ValidateWhile.Update.class) ItemDto itemDto,
                                           @PathVariable(required = false) Long itemId) {
         log.info("Вызов метода PATCH инструмента {}", itemDto.getName());
         if (itemId != null) {
