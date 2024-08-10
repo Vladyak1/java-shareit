@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
@@ -26,17 +28,16 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemDto> getById(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable long id) {
+    public ResponseEntity<ItemInfoDto> getById(@RequestHeader("X-Sharer-User-Id") String ownerId, @PathVariable long id) {
         log.info("Вызов метода GET инструмента с id={} для пользователя с id={}", id, ownerId);
-        return ResponseEntity.ok().body(itemService.getById(ownerId, id));
+        return ResponseEntity.ok().body(itemService.getItem(ownerId, id));
     }
 
     @PostMapping
     public ResponseEntity<ItemDto> add(@RequestHeader("X-Sharer-User-Id") String ownerId,
                                        @RequestBody @Validated(ValidateWhile.Create.class) ItemDto itemDto) {
         log.info("Вызов метода POST инструмента: ownerId={}, item={}", ownerId, itemDto);
-        return ResponseEntity.ok()
-                .body(itemService.add(ownerId, itemDto));
+        return ResponseEntity.ok().body(itemService.saveItem(ownerId, itemDto));
     }
 
     @PatchMapping("/{itemId}")
@@ -47,7 +48,7 @@ public class ItemController {
         if (itemId != null) {
             itemDto.setId(itemId);
         }
-        ItemDto updatedItem = itemService.update(ownerId, itemDto);
+        ItemDto updatedItem = itemService.updateItem(ownerId, itemDto);
         log.info("Инструмент {} с id={} успешно обновлен.", itemDto.getName(), itemDto.getId());
         return ResponseEntity.ok().body(updatedItem);
     }
@@ -60,5 +61,12 @@ public class ItemController {
         return ResponseEntity.ok().body(returnedItems);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDto> addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                 @PathVariable Long itemId,
+                                 @RequestBody CommentDto commentDto) {
+        log.info("Вызов метода POST /{itemId}/comment инструмента со следующим userId='{}' itemId='{}' commentDto='{}', ", userId, itemId, commentDto);
+        return ResponseEntity.ok().body(itemService.addComment(userId, itemId, commentDto));
+    }
 
 }

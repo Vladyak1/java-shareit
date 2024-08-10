@@ -23,19 +23,19 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getAll() {
         log.info("Вызов метода GET всех пользователей");
-        return ResponseEntity.ok().body(userService.getAll());
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
         log.info("Вызов GET пользователя с id={}", id);
-        return ResponseEntity.ok().body(userService.getById(id));
+        return ResponseEntity.ok().body(userService.getUser(id));
     }
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody @Validated(ValidateWhile.Create.class) UserDto user) {
         log.info("Вызов метода POST пользователя {}", user.getName());
-        UserDto createdUser = userService.create(user);
+        UserDto createdUser = userService.saveUser(user);
         log.info("Пользователь {} с id={} создан", createdUser.getName(), createdUser.getId());
         return ResponseEntity.ok().body(createdUser);
     }
@@ -44,7 +44,7 @@ public class UserController {
     public ResponseEntity<UserDto> update(@PathVariable long userId,
                                           @RequestBody @Validated(ValidateWhile.Update.class) UserDto newUser) {
         log.info("Вызов метода PATCH пользователя: {}", newUser.getName());
-        UserDto updatedUser = userService.update(userId, newUser);
+        UserDto updatedUser = userService.updateUser(userId, newUser);
         log.info("Пользователь {} с id={} обновлен", newUser.getName(), newUser.getId());
         return ResponseEntity.ok().body(updatedUser);
     }
@@ -53,7 +53,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
         log.info("Вызов метода DELETE пользователя с id={}", id);
-        userService.delete(id);
+        userService.deleteUser(id);
     }
 
 

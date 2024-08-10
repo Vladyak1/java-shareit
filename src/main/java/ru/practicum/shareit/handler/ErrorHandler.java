@@ -2,15 +2,11 @@ package ru.practicum.shareit.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.DuplicatedException;
-import ru.practicum.shareit.exception.InterruptionRuleException;
-import ru.practicum.shareit.exception.MyNotFoundException;
-import ru.practicum.shareit.exception.RepositoryReceiveException;
+import ru.practicum.shareit.exception.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -49,7 +45,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalid(final MethodArgumentNotValidException e) {
+    public ErrorResponse handleInvalid(BookingServiceException e) {
         log.debug("Invalid data: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }

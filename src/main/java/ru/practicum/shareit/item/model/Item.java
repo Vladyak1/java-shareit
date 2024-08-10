@@ -1,18 +1,30 @@
 package ru.practicum.shareit.item.model;
 
+import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.shareit.user.model.User;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(of = "id")
+@Entity
+@Table(name = "items")
 public class Item {
-
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String description;
-    private long owner;
-    private boolean available;
-
+    private Boolean available;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+//    @OneToMany(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "item_id")
+//    private List<Booking> bookings;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "item_id")
+//    private List<Comment> comments;
 }
