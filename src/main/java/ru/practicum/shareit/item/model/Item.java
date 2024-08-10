@@ -2,7 +2,11 @@ package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.user.model.User;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -21,10 +25,10 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
-//    @OneToMany(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "item_id")
-//    private List<Booking> bookings;
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "item_id")
-//    private List<Comment> comments;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    private List<Booking> bookings;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private List<Comment> comments;
 }

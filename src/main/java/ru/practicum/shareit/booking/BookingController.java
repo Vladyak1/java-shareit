@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
@@ -27,9 +28,9 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @RequestBody @Validated(ValidateWhile.Create.class) BookingDto bookingDto) {
-        log.info("Вызов метода POST бронирования: userId={}, booking={}", userId, bookingDto);
-        return ResponseEntity.ok().body(bookingService.saveBooking(userId, bookingDto));
+                                             @RequestBody @Validated(ValidateWhile.Create.class) BookingRequestDto bookingRequestDto) {
+        log.info("Вызов метода POST бронирования: userId={}, booking={}", userId, bookingRequestDto);
+        return ResponseEntity.ok().body(bookingService.saveBooking(userId, bookingRequestDto));
     }
 
     @GetMapping

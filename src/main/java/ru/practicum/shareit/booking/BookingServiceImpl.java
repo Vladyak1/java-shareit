@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.BookingServiceException;
@@ -10,8 +11,10 @@ import ru.practicum.shareit.exception.InterruptionRuleException;
 import ru.practicum.shareit.exception.MyNotFoundException;
 import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 
@@ -25,28 +28,36 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
+    private final UserMapper userMapper;
+    private final ItemMapper itemMapper;
 
     @Override
-    public BookingDto saveBooking(Long userId, BookingDto bookingDto) {
-        Item item = itemRepository.findById(bookingDto.getItemId())
+    public BookingDto saveBooking(Long userId, BookingRequestDto bookingRequestDto) {
+        Item item = itemRepository.findById(bookingRequestDto.getItemId())
                 .orElseThrow(() -> new RepositoryReceiveException("Такой вещи для бронирования нет"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователь с id = " + userId + " не найден"));
         if (!item.getAvailable()) {
             throw new BookingServiceException("Вещь недоступна для бронирования");
         }
-        Booking booking = bookingMapper.toModel(bookingDto);
-        booking.setBooker(user);
-        booking.setItem(item);
-        booking.setStatus(BookingStatus.WAITING);
-        return bookingMapper.toDto(bookingRepository.save(booking));
+        return bookingMapper.toDto(bookingRepository.save(
+                Booking.builder()
+                        .start(bookingRequestDto.getStart())
+                        .end(bookingRequestDto.getEnd())
+                        .item(item)
+                        .booker(user)
+                        .status(BookingStatus.WAITING)
+                        .build()
+        ));
     }
 
     @Override
     public BookingDto setApproved(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RepositoryReceiveException("Такого бронирования нет"));
-        if (!booking.getItem().getOwner().getId().equals(userId)) {
+        Item item = itemRepository.findById(booking.getItem().getId())
+                .orElseThrow(() -> new RepositoryReceiveException("Такой вещи для бронирования нет"));
+        if (!item.getOwner().getId().equals(userId)) {
             throw new BookingServiceException("Подтверждать бронирование может только владелец");
         }
         if (booking.getStatus().equals(BookingStatus.APPROVED)) {
@@ -65,7 +76,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto getBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RepositoryReceiveException("Такого бронирования нет"));
-        if (!booking.getBooker().getId().equals(userId) && !booking.getItem().getOwner().getId().equals(userId)) {
+        Item item = itemRepository.findById(booking.getItem().getId())
+                .orElseThrow(() -> new RepositoryReceiveException("Такой вещи для бронирования нет"));
+        if (!booking.getBooker().getId().equals(userId) && !item.getOwner().getId().equals(userId)) {
             throw new MyNotFoundException("Запрашивать бронирование можен только владелец, " +
                     "либо забронировавший пользователь");
         }
