@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Entity
+@ToString
 @Table(name = "items")
 public class Item {
     @Id
@@ -25,10 +26,10 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @JoinColumn(name = "item_id")
     private List<Booking> bookings;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     @JoinColumn(name = "item_id")
     private List<Comment> comments;
 }

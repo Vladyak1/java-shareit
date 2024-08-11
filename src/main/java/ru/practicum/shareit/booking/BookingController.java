@@ -36,7 +36,7 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<Collection<BookingDto>> findAll(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(defaultValue = "ALL", required = false) String state) {
+            @RequestParam(defaultValue = "ALL") String state) {
         log.info("Вызов метода GET всех бронирований для пользователя с id={}", userId);
         return ResponseEntity.ok().body(bookingService.getAllByBookerAndStatus(userId, state));
     }

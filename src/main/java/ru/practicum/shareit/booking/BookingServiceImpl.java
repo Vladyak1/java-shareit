@@ -11,10 +11,8 @@ import ru.practicum.shareit.exception.InterruptionRuleException;
 import ru.practicum.shareit.exception.MyNotFoundException;
 import ru.practicum.shareit.exception.RepositoryReceiveException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 
@@ -28,13 +26,11 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
-    private final UserMapper userMapper;
-    private final ItemMapper itemMapper;
 
     @Override
     public BookingDto saveBooking(Long userId, BookingRequestDto bookingRequestDto) {
         Item item = itemRepository.findById(bookingRequestDto.getItemId())
-                .orElseThrow(() -> new RepositoryReceiveException("Такой вещи для бронирования нет"));
+                .orElseThrow(() -> new MyNotFoundException("Такой вещи для бронирования нет"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователь с id = " + userId + " не найден"));
         if (!item.getAvailable()) {
@@ -79,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(booking.getItem().getId())
                 .orElseThrow(() -> new RepositoryReceiveException("Такой вещи для бронирования нет"));
         if (!booking.getBooker().getId().equals(userId) && !item.getOwner().getId().equals(userId)) {
-            throw new MyNotFoundException("Запрашивать бронирование можен только владелец, " +
+            throw new BookingServiceException("Запрашивать бронирование можен только владелец, " +
                     "либо забронировавший пользователь");
         }
         return bookingMapper.toDto(booking);
