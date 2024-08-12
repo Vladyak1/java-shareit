@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.exception.BookingServiceException;
 import ru.practicum.shareit.exception.InterruptionRuleException;
 import ru.practicum.shareit.exception.MyNotFoundException;
@@ -85,27 +86,27 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getAllByBookerAndStatus(Long userId, String state) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователь не найден"));
-        return switch (state) {
-            case "ALL" -> bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
+        return switch (BookingState.from(state).get()) {
+            case ALL -> bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
-            case "CURRENT" ->
+            case CURRENT ->
                     bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "PAST" ->
+            case PAST ->
                     bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "FUTURE" ->
+            case FUTURE ->
                     bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "WAITING", "REJECTED" ->
+            case WAITING, REJECTED ->
                     bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.valueOf(state)).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            default -> throw new RuntimeException("Неизвестный статус бронирования: " + state);
+            case null -> throw new RuntimeException("Неизвестный статус бронирования: " + state);
         };
     }
 
@@ -113,27 +114,27 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getAllByOwnerAndStatus(Long userId, String state) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new MyNotFoundException("Пользователь не найден"));
-        return switch (state) {
-            case "ALL" -> bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId).stream()
+        return switch (BookingState.from(state).get()) {
+            case ALL -> bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId).stream()
                     .map(bookingMapper::toDto)
                     .toList();
-            case "CURRENT" ->
+            case CURRENT ->
                     bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "PAST" ->
+            case PAST ->
                     bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "FUTURE" ->
+            case FUTURE ->
                     bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now()).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            case "WAITING", "REJECTED" ->
+            case WAITING, REJECTED ->
                     bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.valueOf(state)).stream()
                             .map(bookingMapper::toDto)
                             .toList();
-            default -> throw new RuntimeException("Неизвестный статус бронирования: " + state);
+            case null -> throw new RuntimeException("Неизвестный статус бронирования: " + state);
         };
     }
 }
