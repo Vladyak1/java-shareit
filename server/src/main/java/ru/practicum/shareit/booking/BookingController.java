@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
 
@@ -28,7 +26,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @RequestBody @Validated(ValidateWhile.Create.class) BookingRequestDto bookingRequestDto) {
+                                             @RequestBody BookingRequestDto bookingRequestDto) {
         log.info("Вызов метода POST бронирования: userId={}, booking={}", userId, bookingRequestDto);
         return ResponseEntity.ok().body(bookingService.saveBooking(userId, bookingRequestDto));
     }

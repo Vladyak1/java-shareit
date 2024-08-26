@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
 
@@ -33,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody @Validated(ValidateWhile.Create.class) UserDto user) {
+    public ResponseEntity<UserDto> create(@RequestBody UserDto user) {
         log.info("Вызов метода POST пользователя {}", user.getName());
         UserDto createdUser = userService.saveUser(user);
         log.info("Пользователь {} с id={} создан", createdUser.getName(), createdUser.getId());
@@ -42,7 +40,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@PathVariable long userId,
-                                          @RequestBody @Validated(ValidateWhile.Update.class) UserDto newUser) {
+                                          @RequestBody UserDto newUser) {
         log.info("Вызов метода PATCH пользователя: {}", newUser.getName());
         UserDto updatedUser = userService.updateUser(userId, newUser);
         log.info("Пользователь {} с id={} обновлен", newUser.getName(), newUser.getId());

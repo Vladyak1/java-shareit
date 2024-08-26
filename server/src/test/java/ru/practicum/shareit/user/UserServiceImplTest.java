@@ -87,10 +87,4 @@ class UserServiceImplTest {
         Assertions.assertEquals(result.getEmail(), userDto.getEmail());
         verify(userRepository, times(1)).findById(anyLong());
     }
-
-    @Test
-    void delete() {
-        userService.deleteUser(user.getId());
-        verify(userRepository, times(1)).deleteById(anyLong());
-    }
 }

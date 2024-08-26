@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
@@ -42,6 +43,7 @@ class BookingServiceImplTest {
     private User owner;
     private Item item;
     private final BookingMapper bookingMapper;
+    private ItemDto itemDto;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +70,13 @@ class BookingServiceImplTest {
                 .owner(owner)
                 .build();
         itemRepository.save(item);
+        itemDto = ItemDto.builder()
+                .id(1L)
+                .name("TestItemDtoName")
+                .description("TestItemDtoDescription")
+                .available(true)
+                .requestId(1L)
+                .build();
         booking = Booking.builder()
                 .id(1L)
                 .start(LocalDateTime.now().plusDays(1))

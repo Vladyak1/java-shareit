@@ -3,12 +3,10 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
-import ru.practicum.shareit.validator.ValidateWhile;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,14 +33,14 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> add(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                                       @RequestBody @Validated(ValidateWhile.Create.class) ItemDto itemDto) {
+                                       @RequestBody ItemDto itemDto) {
         log.info("Вызов метода POST инструмента: ownerId={}, item={}", ownerId, itemDto);
         return ResponseEntity.ok().body(itemService.saveItem(ownerId, itemDto));
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") String ownerId,
-                                          @RequestBody @Validated(ValidateWhile.Update.class) ItemDto itemDto,
+                                          @RequestBody ItemDto itemDto,
                                           @PathVariable(required = false) Long itemId) {
         log.info("Вызов метода PATCH инструмента {}", itemDto.getName());
         if (itemId != null) {
