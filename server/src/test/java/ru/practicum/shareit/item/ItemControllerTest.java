@@ -10,11 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,6 +64,15 @@ class ItemControllerTest {
                 .build();
     }
 
+    public ItemInfoDto getItemInfoDto() {
+        return ItemInfoDto.builder()
+                .id(1L)
+                .name("TestItemName")
+                .description("TestItemDescription")
+                .comments(List.of(getCommentDto()))
+                .build();
+    }
+
     @Test
     void findAll() throws Exception {
 
@@ -75,6 +86,23 @@ class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
         verify(itemService, times(1)).getAllByOwner(anyString());
+    }
+
+    @Test
+    void getItemDto() throws Exception {
+        ItemInfoDto itemInfoDto = getItemInfoDto();
+        when(itemService.getItem(any(), anyLong())).thenReturn(itemInfoDto);
+
+        mockMvc.perform(get("/items/1")
+                        .header("X-Sharer-User-Id", 1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemInfoDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(itemInfoDto.getName())))
+                .andExpect(jsonPath("$.description", is(itemInfoDto.getDescription())));
+        verify(itemService, times(1)).getItem(any(), anyLong());
     }
 
     @Test

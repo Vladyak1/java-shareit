@@ -87,4 +87,5 @@ class UserServiceImplTest {
         Assertions.assertEquals(result.getEmail(), userDto.getEmail());
         verify(userRepository, times(1)).findById(anyLong());
     }
+
 }

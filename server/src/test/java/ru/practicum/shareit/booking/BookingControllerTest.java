@@ -122,4 +122,18 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.end", is(bookingDto.getEnd().format(DateTimeFormatter.ISO_DATE_TIME))));
         verify(bookingService, times(1)).getBooking(anyLong(), anyLong());
     }
+
+    @Test
+    void findAllByOwnerAndStatus() throws Exception {
+        when(bookingService.getAllByOwnerAndStatus(anyLong(), anyString())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+        verify(bookingService, times(1)).getAllByOwnerAndStatus(anyLong(), anyString());
+    }
 }
