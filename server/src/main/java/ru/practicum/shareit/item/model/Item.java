@@ -9,7 +9,8 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
